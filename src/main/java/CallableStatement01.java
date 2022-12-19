@@ -14,7 +14,7 @@ public class CallableStatement01 {
         //CallableStatement ile function cagirmayi parametrelendirecegiz.
 
         //1.Adim:Function kodunu yaz:
-        String sql1 = "CREATE OR   REPLACE FUNCTION  toplamaF(x NUMERIC,y NUMERIC)\n" +
+        String sql1 = "CREATE OR  REPLACE FUNCTION  toplamaF(x NUMERIC,y NUMERIC)\n" +
                 " RETURNS NUMERIC\n" +
                 " LANGUAGE plpgsql\n" +
                 " AS\n" +
@@ -36,6 +36,7 @@ public class CallableStatement01 {
         cst1.registerOutParameter(1, Types.NUMERIC);
         cst1.setInt(2, 6);
         cst1.setInt(3, 4);
+
 
         //5.Adim: execute() methodu ile CallableStatement'i calistir.
         cst1.execute();
@@ -76,6 +77,51 @@ public class CallableStatement01 {
         //6.Adim: Sonucu cagirmak icin return data type tipine gore
         System.out.printf("%.2f", cst2.getBigDecimal(1));
 
+
+        String sql3= "CREATE OR  REPLACE FUNCTION  toplama2F(x NUMERIC,y NUMERIC,z NUMERIC)\n" +
+                " RETURNS NUMERIC\n" +
+                " LANGUAGE plpgsql\n" +
+                " AS\n" +
+                " $$\n" +
+                " BEGIN\n" +
+                " \n" +
+                " RETURN x+y+z;\n" +
+                " \n" +
+                " END\n" +
+                " $$";
+
+
+        st.execute(sql3);
+        CallableStatement cst4 = con.prepareCall("{? = call toplama2F(?,?,?)}");
+
+        cst4.registerOutParameter(1, Types.NUMERIC);
+        cst4.setInt(2, 1);
+        cst4.setInt(3, 6);
+        cst4.setInt(4, 3);
+
+        cst4.execute();
+
+        System.out.println( cst4.getBigDecimal(1));
+
+        String sql6="CREATE OR  REPLACE FUNCTION  concatF(a varchar(10),b varchar(10))\n" +
+                "                 RETURNS varchar\n" +
+                "                 LANGUAGE plpgsql\n" +
+                "                 AS\n" +
+                "                 $$\n" +
+                "                 BEGIN \n" +
+                "                 \n" +
+                "                 RETURN concat(a,b); \n" +
+                "                \n" +
+                "                 END\n" +
+                "                 $$;";
+
+        st.execute(sql6);
+        CallableStatement cst5 = con.prepareCall("{? = call concatF(?,?)}");
+        cst5.registerOutParameter(1,Types.VARCHAR);
+        cst5.setObject(2,"ALi");
+        cst5.setObject(3,"Can");
+        cst5.execute();
+        System.out.println("cst5 = " + cst5.getString(1));
 
 
 
