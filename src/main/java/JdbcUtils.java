@@ -202,9 +202,6 @@ public class JdbcUtils {
 
 
 
-
-
-
     //Table oluşturan method
     public static void createTable(String tableName, String... columnName_dataType ){
         StringBuilder columnName_dataValue = new StringBuilder("");
@@ -232,6 +229,49 @@ public class JdbcUtils {
             throw new RuntimeException(e);
         }return fields;
     }
+
+    public static List<Object> listeEkleme2(String tableName,String where,String fieldName ){
+
+        Statement st =JdbcUtils.createStatement();
+        String query = "Select "+fieldName+ " from "+ tableName+ "WHERE "+ fieldName+where;
+        List<Object> fields=new ArrayList<>();
+        try {
+            ResultSet resultSet= st.executeQuery(query);
+
+            while (resultSet.next()){
+                fields.add(resultSet.getObject(1));
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }return fields;
+    }
+
+    //Sütun Değerlerini List içerisine alan method
+    public static List<Object> getColumnList(String columnName, String tableName) {
+
+        List<Object> columnData = new ArrayList<>();//ResultSet'ten alınan datanın koyulacağı List.
+
+        //SELECT        id          FROM      students
+        String query = "SELECT " + columnName + " FROM " + tableName;
+
+        executeQuery(query);// => Bu method üstte oluşturuldu. Query'yi çalıştırıp alınan datayı 'resultSet' container'ı içine atama yapıyor.
+
+        try {
+            while (resultSet.next()) {
+                columnData.add(resultSet.getObject(columnName));//add methodu ile alınan sütun değerlerini List'e ekliyor.
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return columnData;
+    }
+
+
+
+
+
     //5. Adım: Bağlantı ve Statement'ı kapat.
     public static void closeConnectionAndStatement(){
         try {
